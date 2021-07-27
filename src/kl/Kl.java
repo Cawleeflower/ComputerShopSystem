@@ -18,6 +18,7 @@ public class Kl {
         System.out.println("Haha");
 	System.out.println("ASD");
         System.out.println("HAHAHA");
+        System.out.println("LOLOL");
     }
     
 }
