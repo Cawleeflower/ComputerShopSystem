@@ -16,6 +16,8 @@ public class Kl {
      */
     public static void main(String[] args) {
         System.out.println("Haha");
+	System.out.println("ASD");
+        System.out.println("HAHAHA");
     }
     
 }
