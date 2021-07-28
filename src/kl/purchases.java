@@ -11,4 +11,5 @@ package kl;
  */
 public class purchases {
     System.out.println("purchase");
+    System.out.println("haaha");
 }
