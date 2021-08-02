@@ -81,8 +81,4 @@ public class Product {
     public void addProduct() {
         
     }
-
-public class product {
-    System.out.println("product");
-    System.out.println("Hahaha");
 }
