@@ -10,8 +10,10 @@ package kl;
  * @author Ng Pheng Loong
  */
 public class purchases {
+
     System.out.println("purchase");
     System.out.println("haaha");
     System.out.println("Test");
     abc;
+
 }
