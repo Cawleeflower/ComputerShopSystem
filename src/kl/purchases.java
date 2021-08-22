@@ -14,6 +14,6 @@ public class purchases {
     System.out.println("purchase");
     System.out.println("haaha");
     System.out.println("Test");
-    abc;
+    System.out.println("lol");
 
 }
