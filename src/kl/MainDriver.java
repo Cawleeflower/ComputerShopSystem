@@ -25,7 +25,15 @@ import java.util.Scanner;
 public class MainDriver {
     public static void main(String[] args) {
         
+        Database dbComputerShop = new Database();
+        Product[] arrProduct = new Product[5];
+        Cart cart = new Cart();
+        Scanner scan = new Scanner(System.in);
+        Scanner scan1 = new Scanner(System.in);
         
-        
+        cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "BBB", 5, 5);
+        cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "BBB", 5, 5);
+    
+        cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "CCC", 5, 5);
     }
 }
