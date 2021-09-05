@@ -32,8 +32,8 @@ public class MainDriver {
         Scanner scan1 = new Scanner(System.in);
         
         cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "BBB", 5, 5);
-        cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "BBB", 5, 5);
-    
         cart.addToCart(dbComputerShop.getCon(),"b@gmail.com", "CCC", 5, 5);
+        
+        cart.removeFromCart(dbComputerShop.getCon(), "b@gmail.com", "BBB");
     }
 }
