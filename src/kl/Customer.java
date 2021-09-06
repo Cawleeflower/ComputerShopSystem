@@ -23,10 +23,10 @@ public class Customer {
         System.out.println("***************************************************************");
         System.out.println("*                     1 Customer Information                  *");
         System.out.println("*                     2 Product                               *");
-        System.out.println("*                     3 Purchasing                            *");
+        System.out.println("*                     3 Cart                                  *");
         System.out.println("*                     4 Logout                                *");
         System.out.println("***************************************************************");
-        System.out.println("Please Enter Your Option(1,2,3,4,5) : ");
+        System.out.println("Please Enter Your Option(1,2,3,4) : ");
         optional = s1.nextInt();
         return optional;
    }
