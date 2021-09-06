@@ -48,13 +48,20 @@ public class Cart {
     }
 
     public void setSubTotalPrice(double subTotalPrice) {
-        this.subTotalPrice = subTotalPrice;
+        this.subTotalPrice = subTotalPrice; 
     }
     
     public void clearValue(ArrayList<String> productName, ArrayList<Integer> quantity, ArrayList<Double> totalPrice){
         productName.clear();
         quantity.clear();
         totalPrice.clear();
+    }
+    
+    public void calculateSubTotalPrice() {
+        this.subTotalPrice = 0;
+        for (double s : this.totalPrice) {
+            this.subTotalPrice += s;
+        }
     }
    
     
@@ -63,6 +70,8 @@ public class Cart {
         ArrayList<String> testPrice = new ArrayList<String>();
         ArrayList<String> testQuantity = new ArrayList<String>();
         int index = 0;
+        String[] strSplit;
+        double[] dblSplit;
         String stringProductName;
         String stringTotalPrice;
         String stringQuantity;
@@ -78,12 +87,11 @@ public class Cart {
             while (rs.next()) {
                 for (int i = 1; i<count; i++) {
                     String columnValue = rs.getString(i);
+                    System.out.println(rsMetaData.getColumnName(i));
                     if (rsMetaData.getColumnName(i).equals("ProductName")) {
-                        System.out.println("Enters product name");
                         if (columnValue.toLowerCase().contains(newProductName.toLowerCase())) {
                             sameProduct =  true;
                             index = getProductPositionInCart(columnValue,newProductName);
-                            System.out.println(index);
                             appendCartProductNames(columnValue, index, newProductName);
                         }
                             
@@ -93,15 +101,23 @@ public class Cart {
                             
                     } else if (rsMetaData.getColumnName(i).equals("TotalPrice")) {
                         if (sameProduct) {
+                            System.out.println("Running updateCartPrice");
                             testPrice = updateCartPrice(columnValue, index, newTotalPrice);
                         }
                             
-                        else
+                        else {
+                            strSplit = columnValue.split(",");
+                            dblSplit = Arrays.stream(strSplit).mapToDouble(Double::parseDouble).toArray();
+                            for (double s : dblSplit) {
+                                this.totalPrice.add(s);
+                            }
                             testPrice.add(columnValue + "," + String.valueOf(newTotalPrice));
+                        }
+                            
                     } else if (rsMetaData.getColumnName(i).equals("Quantity")) {
                         if (sameProduct) {
                             
-                            testQuantity = updateCartPrice(columnValue, index, newQuantity);
+                            testQuantity = updateCartQuantity(columnValue, index, newQuantity);
                         }
                             
                         else
@@ -110,15 +126,18 @@ public class Cart {
                 }
                 existingRow = true;
             }
+            
+            calculateSubTotalPrice();
+            System.out.println(this.subTotalPrice);
             if (existingRow) {
                 
                 stringProductName = String.join(",", productName);
                 stringTotalPrice = testPrice.stream().map(Object::toString).collect(Collectors.joining(","));
                 stringQuantity = testQuantity.stream().map(Object::toString).collect(Collectors.joining(","));
-                System.out.println(stringTotalPrice + stringQuantity);
                 runUpdateCartQuery(con, stringProductName, stringTotalPrice, stringQuantity, customerId);
             } else {
-                runInsertCartQuery(con, newProductName, newTotalPrice, newQuantity, customerId);
+                setSubTotalPrice(newTotalPrice);
+                runInsertCartQuery(con, newProductName, newTotalPrice, newQuantity);
             }
  
 
@@ -149,10 +168,12 @@ public class Cart {
         double[] dblSplit;
         ArrayList<String> testPrice = new ArrayList<String>();
         strSplit = columnValue.split(",");
-        System.out.println(columnValue);
         dblSplit = Arrays.stream(strSplit).mapToDouble(Double::parseDouble).toArray();
+        System.out.println("Before dblSplit[index]: " + dblSplit[index]);
         dblSplit[index] = dblSplit[index] + newTotalPrice;
+        System.out.println("After dblSplit[index]: " + dblSplit[index]);
         for (double s : dblSplit) {
+            this.totalPrice.add(s);
             testPrice.add(String.valueOf(s));
         }
         return testPrice;
@@ -167,6 +188,7 @@ public class Cart {
         intSplit[index] = intSplit[index] + newQuantity;
         for (int s : intSplit) {
             testQuantity.add(String.valueOf(s));
+            this.quantity.add(s);
         }
         return testQuantity;
     }
@@ -182,7 +204,7 @@ public class Cart {
         
     }
     
-    public void runInsertCartQuery(Connection con, String newProductName, double newTotalPrice, int newQuantity, String customerId) {
+    public void runInsertCartQuery(Connection con, String newProductName, double newTotalPrice, int newQuantity) {
         this.productName.add(newProductName);
         this.totalPrice.add(newTotalPrice);
         this.quantity.add(newQuantity);
@@ -196,7 +218,7 @@ public class Cart {
         try {
         Statement insertStmt = con.createStatement();
         PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
-        preparedStatement.setString(1, customerId);
+        preparedStatement.setString(1, this.cartId);
         preparedStatement.setString(2, stringProductName);
         preparedStatement.setString(3, stringTotalPrice);
         preparedStatement.setString(4, stringQuantity);
@@ -244,7 +266,7 @@ public class Cart {
         return String.join(",", strList);
     }
     
-    public void removeFromCart(Connection con, String customerId, String newProductName) {
+    public void removeFromCart(Connection con, String newProductName) {
             
         
         String replacedString = "";
@@ -252,7 +274,7 @@ public class Cart {
         String replacedQuantity = "";
         int index = 0;
         try {
-           ResultSet rs = getCartData(con,customerId);
+           ResultSet rs = getCartData(con,this.cartId);
            ResultSetMetaData rsMetaData = getCartMetaData(rs);
            int count = rsMetaData.getColumnCount();
            while(rs.next()) {
@@ -265,19 +287,18 @@ public class Cart {
                         
                         replacedString = removeProductNameFromCart(columnValue, index);
                     }
-                    else if (rsMetaData.getColumnName(i).equals("TotalPrice")) {
+                    
+               }else if (rsMetaData.getColumnName(i).equals("TotalPrice")) {
 
                         this.totalPrice.clear();
-                        System.out.println("ColumnValue in removeFromCart: " + columnValue);
                         replacedTotalPrice = removePriceFromCart(columnValue, index);
                         
-                    }else if (rsMetaData.getColumnName(i).equals("Quantity")) {
-                        this.quantity.clear();
-                        replacedQuantity = removeQuantityFromCart(columnValue, index);
-                    }
+               }else if (rsMetaData.getColumnName(i).equals("Quantity")) {
+                   this.quantity.clear();
+                   replacedQuantity = removeQuantityFromCart(columnValue, index);
                }
             } 
-                runUpdateCartQuery(con, replacedString, replacedTotalPrice, replacedQuantity, customerId);
+                runUpdateCartQuery(con, replacedString, replacedTotalPrice, replacedQuantity, this.cartId);
             }
           
         } catch(SQLException ex) {
@@ -323,9 +344,17 @@ public class Cart {
         this.quantity.set(index, newQuantity);
     }
 
-    @Override
-    public String toString() {
-        return "CartId=" + cartId + "\nproductName=" + productName + "\ntotalPrice=" + totalPrice + "\nquantity=" + quantity + "\nsubTotalPrice=" + subTotalPrice;
+    public String toString(Connection con) {
+        String test = "SELECT * FROM Cart WHERE CartId='" + this.cartId + "'";
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet set = stmt.executeQuery(test);  
+            if (set.next()) {
+                return "Cart{" + "productName=" + set.getString(2) + ", totalPrice=" + set.getString(3) + ", quantity=" + set.getString(4) + ", subTotalPrice=" + set.getString(5) + '}'; 
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        return "";
     }
-    
 }
