@@ -18,8 +18,8 @@ import java.util.Date;
  *
  * @author user
  */
-public class TestRegister {
-    public static void main(String[] args){
+public class CustomerRegister {
+    public static void CustRegister(){
         Connection myConObj = null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
@@ -58,14 +58,9 @@ public class TestRegister {
         System.out.print("Enter Your Date Of Birth:");
         String DateOfBirth = s1.nextLine();
         register.setDateOfBirth(DateOfBirth);
-        
-        printInf(register);
-            
+    
             Register.insert(register.getEmail(),register.getPassword(),register.getCustName(),register.getAddress(),register.getStates(),register.getDateOfBirth(),register.getPhoneNo(),myConObj);
         
     }
-    
-    private static void printInf(Register register){
-        System.out.print(register.toString());
-    }
+
 }

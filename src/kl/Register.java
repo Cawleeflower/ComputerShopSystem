@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package kl;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,8 +18,8 @@ import java.util.Date;
  * @author user
  */
 public class Register {
-
-    String Email,Password,CustName,Address,States,DateOfBirth;
+    protected String Email,Password;
+    String CustName,Address,States,DateOfBirth;
     int phoneNo;
 
     public Register() {

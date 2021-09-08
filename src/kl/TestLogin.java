@@ -5,31 +5,31 @@
  */
 package kl;
 
-import static assignment.Customer.displayInfor;
-import static assignment.Customer.updateInfor;
-import static assignment.CustomerRegister.CustRegister;
-import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 /**
  *
  * @author user
  */
-public class CustomerHome {
-    public static void main(String[] args) {
-       Customer CustInf = new Customer();
+public class TestLogin {
+    public static void main(String[] args){
+        Login log = new Login();
        
        Scanner s1 = new Scanner(System.in); 
        Connection myConObj = null;
-       
          try{
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-       }catch (SQLException e) {
+            }catch (SQLException e) {
             e.printStackTrace();
-       }
+            }
+         
+          int optional = Login.mainPage();
         
+        if (optional == 1){
+            Login.DisplayMenu();    
+        }
     }
-    
 }
