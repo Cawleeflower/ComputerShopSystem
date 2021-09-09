@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  *
@@ -37,6 +39,21 @@ public class CustomerRegister {
         Register register = new Register();
         Scanner s1 = new Scanner(System.in);
         Scanner s2 = new Scanner(System.in);
+        Random rd=new Random();
+                        HashSet<Integer> set= new HashSet<Integer>();
+                        while(set.size()<1)
+                        {
+                            int ran=rd.nextInt(9999)+10000;
+                            set.add(ran);
+                        }
+                        int len = 5;
+                        String random=String.valueOf(len);
+                        for(int  random1:set)
+                        {
+                            System.out.println("Your ID : " + random1);
+                            random=Integer.toString(random1);
+                            register.setCustID(random);
+                        }
         System.out.print("Enter Your Email:");
         String Email = s1.nextLine();
         register.setEmail(Email);
@@ -55,11 +72,11 @@ public class CustomerRegister {
         System.out.print("Enter Your Phone Number:");
         int phoneNo = s2.nextInt();
         register.setPhoneNo(phoneNo);
-        System.out.print("Enter Your Date Of Birth:");
+        System.out.print("Enter Your Date Of Birth(YYYY/MM/DD):");
         String DateOfBirth = s1.nextLine();
         register.setDateOfBirth(DateOfBirth);
     
-            Register.insert(register.getEmail(),register.getPassword(),register.getCustName(),register.getAddress(),register.getStates(),register.getDateOfBirth(),register.getPhoneNo(),myConObj);
+            Register.insert(register.getEmail(),register.getPassword(),register.getCustName(),register.getAddress(),register.getStates(),register.getDateOfBirth(),register.getPhoneNo(),register.getCustID(),myConObj);
         
     }
 

@@ -5,7 +5,6 @@
  */
 package kl;
 
-import static assignment.Customer.displayInfor;
 import static assignment.Customer.updateInfor;
 import static assignment.CustomerRegister.CustRegister;
 import java.util.Scanner;

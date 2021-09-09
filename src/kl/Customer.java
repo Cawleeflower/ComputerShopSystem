@@ -27,64 +27,70 @@ public class Customer {
         System.out.println("*                     1 Customer Information                  *");
         System.out.println("*                     2 Product                               *");
         System.out.println("*                     3 Cart                                  *");
-        System.out.println("*                     4 Logout                                *");
+        System.out.println("*                     4 History                               *");
+        System.out.println("*                     5 Logout                                *");
         System.out.println("***************************************************************");
-        System.out.println("Please Enter Your Option(1,2,3,4) : ");
+        System.out.println("Please Enter Your Option(1-5) : ");
         optional = s1.nextInt();
         return optional;
    }
     
-    public static int DisplayMenu(){
+    public static int DisplayCustomerMenu(String Email){
         Scanner s1 = new Scanner(System.in);
-        String Email ="" ,Password="",CustName="",Address="",States="",DateOfBirth="";
+        String Password="",CustName="",Address="",States="",DateOfBirth="",CustID="";
         int phoneNo=0;
         Connection myConObj=null;
-        
+        Statement mystatObj = null;
+        ResultSet myResObj = null;
+        String query = "Select * from Register";
+        String url = "";
         try {
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        try{
+                       query = "Select * from Register WHERE Email ='" + Email + "'";
+                       myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+                       mystatObj = myConObj.createStatement();
+                       ResultSet rs = mystatObj.executeQuery(query);
+                       ResultSetMetaData rsMetaData = rs.getMetaData();
+                       int count = rsMetaData.getColumnCount();
+                       if(rs.next()){
+                           System.out.println("******************************************************************");
+                           System.out.println("*                           Customer Information                 *");
+                           System.out.println("******************************************************************");
+                           System.out.println("*Customer ID           :"+rs.getString(8)+"                                         *");
+                           System.out.println("*Customer Name         :"+rs.getString(3)+"                                         *");
+                           System.out.println("*Customer Email        :"+rs.getString(1)+"                                         *");
+                           System.out.println("*Customer Password     :"+rs.getString(2)+"                                         *");
+                           System.out.println("*Customer Address      :"+rs.getString(4)+"                                         *");
+                           System.out.println("*Customer States       :"+rs.getString(5)+"                                         *");
+                           System.out.println("*Customer Phone Number :"+rs.getString(6)+"                                         *");
+                           System.out.println("*Customer Date of Birth:"+rs.getString(7)+"                                         *");
+                           System.out.println("******************************************************************");
+                       }
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        System.out.println("");
         System.out.println("--------------------------------");
-        System.out.println("1. Display Information          ");
-        System.out.println("2. Update Infotmation           ");
+        System.out.println("1. Update Infotmation           ");
         System.out.println("2. Exit                         ");
         System.out.println("Select your choose :");
         int choose = s1.nextInt();
         
         if(choose == 1){
-            displayInfor(Email);
-        }
-        else if(choose == 2){
             updateInfor(Email);
         }
-        else if(choose == 3){
+        else if(choose == 2){
             mainPage();
         }
-        return choose;
-    }
-    
-    public static void displayInfor(String Email){
-        Connection myConObj = null;
-        Statement mystatObj = null;
-        ResultSet myResObj = null;
-        String query = "Select * from Register";
-        String url = "";
-        
-        if(Email.equals(url)){
-            try{
-                       query = "Select * from Register WHERE Email ='" + Email + "'";
-                       myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-                       mystatObj = myConObj.createStatement();
-                       ResultSet rs = mystatObj.executeQuery("select * from Register");
-                       ResultSetMetaData rsMetaData = rs.getMetaData();
-                       int count = rsMetaData.getColumnCount();
-                       myResObj = mystatObj.executeQuery(query);
-            }catch(SQLException e){
-                e.printStackTrace();
-            }
-            
+        else{
+            System.out.println("Invalid number please insert again");
+            DisplayCustomerMenu(Email);
         }
+        return choose;
     }
     
     public static void updateInfor(String Email){
@@ -104,25 +110,25 @@ public class Customer {
         if(choose == 1){
             System.out.println("Please Enter your new Password :");
             String Password = s2.nextLine();
-            updateSql = "UPDATE Register SET" + Password + "=" + Password + " WHERE Email = '" + Email +"'";
+            updateSql = "UPDATE Register SET Password ='" + Password + "' WHERE Email = '" + Email +"'";
         } 
         else if(choose == 2){
             System.out.println("Please Enter your new Address :");
             String Address = s2.nextLine();
-            updateSql = "UPDATE Register SET" + Address + "=" + Address + " WHERE Email = '" + Email +"'";
+            updateSql = "UPDATE Register SET Address ='" + Address + "' WHERE Email = '" + Email +"'";
         }
         else if(choose == 3){
             System.out.println("Please Enter your new States :");
             String States = s2.nextLine();
-            updateSql = "UPDATE Register SET" + States + "=" + States + " WHERE Email = '" + Email +"'";
+            updateSql = "UPDATE Register SET States ='" + States + "' WHERE Email = '" + Email +"'";
         }
         else if(choose == 4){
             System.out.println("Please Enter your new Phone Number :");
             String PhoneNo = s2.nextLine();
-            updateSql = "UPDATE Register SET" + PhoneNo + "=" + PhoneNo + " WHERE Email = '" + Email +"'";
+            updateSql = "UPDATE Register SET PhoneNo ='" + PhoneNo + "' WHERE Email = '" + Email +"'";
         }
         else if(choose == 5){
-            DisplayMenu();
+            DisplayCustomerMenu(Email);
         }
         System.out.println("Are you sure you want update (y/n)");
         String choice = s2.nextLine();
@@ -146,34 +152,30 @@ public class Customer {
     }
 
 
-    public static void CustLogin(){
+    public static String CustLogin(){
         Scanner s1 = new Scanner(System.in);
         Register reg = new Register();
+        String Email ="";
         Connection myConObj = null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
-        
+        ResultSet rs;
         try{
+            do{
                        System.out.print("Email : ");
                        myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-                       String Email = s1.next();
-                       String query = "Select * from Register WHERE Email ='" + Email + "'";
-                       mystatObj = myConObj.createStatement();
-                       ResultSet rs = mystatObj.executeQuery("select * from Register");
-                       ResultSetMetaData rsMetaData = rs.getMetaData();
-                       int count = rsMetaData.getColumnCount();
-                       myResObj = mystatObj.executeQuery(query);
+                       Email = s1.next();
                        System.out.print("Password : ");
                        String Password = s1.next();
+                       String query = "Select * from Register WHERE Email ='" + Email + "' and Password='"+ Password +"'";
                        query = "Select * from Register WHERE Password ='" + Password + "'";
                        mystatObj = myConObj.createStatement();
-                       rs = mystatObj.executeQuery("select * from Register");
-                       rsMetaData = rs.getMetaData();
-                       count = rsMetaData.getColumnCount();
-                       myResObj = mystatObj.executeQuery(query);
+                       rs = mystatObj.executeQuery(query);
+            }while(!rs.next());
             }catch (SQLException e) {
                        e.printStackTrace();
             }
+        return Email;
 
     }
    

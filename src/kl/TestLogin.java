@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class TestLogin {
     public static void main(String[] args){
         Login log = new Login();
-       
+        
        Scanner s1 = new Scanner(System.in); 
        Connection myConObj = null;
          try{
@@ -29,7 +29,11 @@ public class TestLogin {
           int optional = Login.mainPage();
         
         if (optional == 1){
+            String Email="";
             Login.DisplayMenu();    
+        }
+        else if(optional == 2){
+            CustomerRegister.CustRegister();
         }
     }
 }

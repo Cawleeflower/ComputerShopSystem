@@ -19,14 +19,15 @@ import java.util.Date;
  */
 public class Register {
     protected String Email,Password;
-    String CustName,Address,States,DateOfBirth;
+    String CustID,CustName,Address,States,DateOfBirth;
     int phoneNo;
 
     public Register() {
-        this("","","","","","",0);
+        this("","","","","","",0,"");
     }
 
-    public Register(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo) {
+    public Register(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID) {
+        this.CustID = CustID;
         this.Email = Email;
         this.Password = Password;
         this.CustName = CustName;
@@ -36,6 +37,10 @@ public class Register {
         this.phoneNo = phoneNo;
     }
 
+    public void setCustID(String CustID) {
+        this.CustID = CustID;
+    }
+    
     public void setEmail(String Email) {
         this.Email = Email;
     }
@@ -64,6 +69,10 @@ public class Register {
         this.phoneNo = phoneNo;
     }
 
+    public String getCustID() {
+        return CustID;
+    }
+    
     public String getEmail() {
         return Email;
     }
@@ -94,14 +103,14 @@ public class Register {
 
     @Override
     public String toString() {
-        return "Email=" + Email + "\nPassword=" + Password + "\nCustomer Name=" + CustName + "\nAddress=" + Address + "\nStates=" + States + "\nDateOfBirth=" + DateOfBirth + "\nPhone No=" + phoneNo;
+        return "Customer ID=" + CustID + "\nEmail=" + Email + "\nPassword=" + Password + "\nCustomer Name=" + CustName + "\nAddress=" + Address + "\nStates=" + States + "\nDateOfBirth=" + DateOfBirth + "\nPhone No=" + phoneNo;
     }
     
     
-    public static void insert(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,Connection myConObj){
+    public static void insert(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID,Connection myConObj){
     try {
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-            String insertNewUserSQL = "INSERT INTO Register (Email,Password,CustName,Address,States,PhoneNumber,DateOfBirth)" + " VALUES (?,?,?,?,?,?,?)";
+            String insertNewUserSQL = "INSERT INTO Register (Email,Password,CustName,Address,States,PhoneNumber,DateOfBirth,CustID)" + " VALUES (?,?,?,?,?,?,?,?)";
             String updateUserSQL = "UPDATE Register SET Email = ?" + " WHERE Email = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
             
@@ -112,7 +121,7 @@ public class Register {
             pstmt.setString(5, States);
             pstmt.setInt(6, phoneNo);
             pstmt.setString(7, DateOfBirth);
-            
+            pstmt.setString(8, CustID);
             
             
             

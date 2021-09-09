@@ -5,8 +5,8 @@
  */
 package kl;
 
-import java.util.Scanner;
-
+import java.sql.Connection;
+import java.util.*;
 /**
  *
  * @author user
@@ -26,6 +26,9 @@ public class Login {
     
     public static int DisplayMenu(){
         Scanner s1 = new Scanner(System.in);
+        String Email="",Password="",CustName="",Address="",States="",DateOfBirth="";
+        int phoneNo=0;
+        Connection myConObj=null;
         
         System.out.println("--------------------------------");
         System.out.println("1. Customer Login               ");
@@ -34,17 +37,14 @@ public class Login {
         int choose = s1.nextInt();
         
         if(choose == 1){
-            Customer.CustLogin();
+            Email = Customer.CustLogin();
             System.out.println("Login Successfully!");
             System.out.println("Welcome to computer shop!!");
             int optional = Customer.mainPage();
         
         if (optional == 1){
-            Customer.DisplayMenu();    
+            Customer.DisplayCustomerMenu(Email);    
         }
-        }
-        else if(choose == 2){
-            
         }
         return choose;
     }

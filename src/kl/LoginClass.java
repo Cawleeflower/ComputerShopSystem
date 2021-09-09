@@ -14,11 +14,11 @@ import java.util.Scanner;
 public class LoginClass extends Register{
 
     public LoginClass() {
-        this("","","","","","",0);
+        this("","","","","","",0,"");
     }
 
-    public LoginClass(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo) {
-        super(Email, Password, CustName, Address, States, DateOfBirth, phoneNo);
+    public LoginClass(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID) {
+        super(Email, Password, CustName, Address, States, DateOfBirth, phoneNo,CustID);
     }
 
     public void setEmail(String Email) {
