@@ -24,7 +24,7 @@ public class Login {
         return optional;
    }
     
-    public static int DisplayMenu(){
+    public static int DisplayMenu(Register reg){
         Scanner s1 = new Scanner(System.in);
         String Email="",Password="",CustName="",Address="",States="",DateOfBirth="";
         int phoneNo=0;
@@ -38,12 +38,13 @@ public class Login {
         
         if(choose == 1){
             Email = Customer.CustLogin();
+            System.out.println("Email ="+Email);
             System.out.println("Login Successfully!");
             System.out.println("Welcome to computer shop!!");
             int optional = Customer.mainPage();
         
         if (optional == 1){
-            Customer.DisplayCustomerMenu(Email);    
+            Customer.DisplayCustomerMenu(Email,reg);    
         }
         }
         return choose;

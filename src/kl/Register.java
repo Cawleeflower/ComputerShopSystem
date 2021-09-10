@@ -13,34 +13,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Random;
 /**
  *
  * @author user
  */
 public class Register {
     protected String Email,Password;
-    String CustID,CustName,Address,States,DateOfBirth;
+    String CustName;
     int phoneNo;
 
     public Register() {
-        this("","","","","","",0,"");
+        this("","","",0);
     }
 
-    public Register(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID) {
-        this.CustID = CustID;
+    public Register(String Email, String Password, String CustName, int phoneNo) {
         this.Email = Email;
         this.Password = Password;
         this.CustName = CustName;
-        this.Address = Address;
-        this.States = States;
-        this.DateOfBirth = DateOfBirth;
         this.phoneNo = phoneNo;
     }
 
-    public void setCustID(String CustID) {
-        this.CustID = CustID;
-    }
-    
     public void setEmail(String Email) {
         this.Email = Email;
     }
@@ -52,27 +46,11 @@ public class Register {
     public void setCustName(String CustName) {
         this.CustName = CustName;
     }
-
-    public void setAddress(String Address) {
-        this.Address = Address;
-    }
-
-    public void setStates(String States) {
-        this.States = States;
-    }
-
-    public void setDateOfBirth(String DateOfBirth) {
-        this.DateOfBirth = DateOfBirth;
-    }
-
+    
     public void setPhoneNo(int phoneNo) {
         this.phoneNo = phoneNo;
     }
-
-    public String getCustID() {
-        return CustID;
-    }
-    
+   
     public String getEmail() {
         return Email;
     }
@@ -85,43 +63,28 @@ public class Register {
         return CustName;
     }
 
-    public String getAddress() {
-        return Address;
-    }
-
-    public String getStates() {
-        return States;
-    }
-
-    public String getDateOfBirth() {
-        return DateOfBirth;
-    }
-
     public int getPhoneNo() {
         return phoneNo;
     }
 
     @Override
     public String toString() {
-        return "Customer ID=" + CustID + "\nEmail=" + Email + "\nPassword=" + Password + "\nCustomer Name=" + CustName + "\nAddress=" + Address + "\nStates=" + States + "\nDateOfBirth=" + DateOfBirth + "\nPhone No=" + phoneNo;
+        return "Email=" + Email + "\nPassword=" + Password + "\nCustomer Name=" + CustName + "\nPhone No=" + phoneNo;
     }
     
     
-    public static void insert(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID,Connection myConObj){
+    public static void insert(String Email, String Password, String CustName,int phoneNo,Connection myConObj){
     try {
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-            String insertNewUserSQL = "INSERT INTO Register (Email,Password,CustName,Address,States,PhoneNumber,DateOfBirth,CustID)" + " VALUES (?,?,?,?,?,?,?,?)";
+            String insertNewUserSQL = "INSERT INTO Register (Email,Password,CustName,PhoneNumber)" + " VALUES (?,?,?,?)";
             String updateUserSQL = "UPDATE Register SET Email = ?" + " WHERE Email = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
             
             pstmt.setString(1,Email);
             pstmt.setString(2, Password);
             pstmt.setString(3, CustName);
-            pstmt.setString(4, Address);
-            pstmt.setString(5, States);
-            pstmt.setInt(6, phoneNo);
-            pstmt.setString(7, DateOfBirth);
-            pstmt.setString(8, CustID);
+            pstmt.setInt(4, phoneNo);
+
             
             
             
@@ -130,4 +93,39 @@ public class Register {
             e.printStackTrace();
         }
 }
+    public static Register CustRegister(){
+        Connection myConObj = null;
+        Statement mystatObj = null;
+        ResultSet myResObj = null;
+        String query = "Select * from Register";
+        String url = "";
+        
+        try {
+            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            mystatObj = myConObj.createStatement();
+            myResObj = mystatObj.executeQuery(query);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Register register = new Register();
+        Scanner s1 = new Scanner(System.in);
+        Scanner s2 = new Scanner(System.in);
+
+        System.out.print("Enter Your Email:");
+        String Email = s1.nextLine();
+        register.setEmail(Email);
+        System.out.print("Enter Your Password:");
+        String Password = s1.nextLine();
+        register.setPassword(Password);
+        System.out.print("Enter Your Name:");
+        String CustName = s1.nextLine();
+        register.setCustName(CustName);
+        System.out.print("Enter Your Phone Number:");
+        int phoneNo = s2.nextInt();
+        register.setPhoneNo(phoneNo);
+    
+            Register.insert(register.getEmail(),register.getPassword(),register.getCustName(),register.getPhoneNo(),myConObj);
+        return register;
+    }
 }

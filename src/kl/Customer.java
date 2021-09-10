@@ -35,14 +35,15 @@ public class Customer {
         return optional;
    }
     
-    public static int DisplayCustomerMenu(String Email){
+    public static int DisplayCustomerMenu(String Email,Register reg){
         Scanner s1 = new Scanner(System.in);
         String Password="",CustName="",Address="",States="",DateOfBirth="",CustID="";
         int phoneNo=0;
+        CustomerClass Cust = new CustomerClass();
         Connection myConObj=null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
-        String query = "Select * from Register";
+        String query = "Select * from Customer";
         String url = "";
         try {
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
@@ -50,45 +51,49 @@ public class Customer {
             e.printStackTrace();
         }
         try{
-                       query = "Select * from Register WHERE Email ='" + Email + "'";
+                       query = "Select * from Customer WHERE Email ='" + Email + "'";
                        myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
                        mystatObj = myConObj.createStatement();
                        ResultSet rs = mystatObj.executeQuery(query);
                        ResultSetMetaData rsMetaData = rs.getMetaData();
                        int count = rsMetaData.getColumnCount();
                        if(rs.next()){
-                           System.out.println("******************************************************************");
-                           System.out.println("*                           Customer Information                 *");
-                           System.out.println("******************************************************************");
-                           System.out.println("*Customer ID           :"+rs.getString(8)+"                                         *");
-                           System.out.println("*Customer Name         :"+rs.getString(3)+"                                         *");
-                           System.out.println("*Customer Email        :"+rs.getString(1)+"                                         *");
-                           System.out.println("*Customer Password     :"+rs.getString(2)+"                                         *");
-                           System.out.println("*Customer Address      :"+rs.getString(4)+"                                         *");
-                           System.out.println("*Customer States       :"+rs.getString(5)+"                                         *");
-                           System.out.println("*Customer Phone Number :"+rs.getString(6)+"                                         *");
-                           System.out.println("*Customer Date of Birth:"+rs.getString(7)+"                                         *");
-                           System.out.println("******************************************************************");
+                           System.out.println("**************************************************************************************");
+                           System.out.println("*                           Customer Information                                     *");
+                           System.out.println("**************************************************************************************");
+                           System.out.println("*Customer ID           :"+rs.getString(1)+"                                          *");
+                           System.out.println("*Customer Email        :"+rs.getString(2)+"                                          *");
+                           System.out.println("*Customer Password     :"+rs.getString(3)+"                                          *");
+                           System.out.println("*Customer Name         :"+rs.getString(4)+"                                          *");
+                           System.out.println("*Customer Address      :"+rs.getString(5)+"                                          *");
+                           System.out.println("*Customer States       :"+rs.getString(6)+"                                          *");
+                           System.out.println("*Customer Phone Number :"+rs.getString(7)+"                                          *");
+                           System.out.println("*Customer Date of Birth:"+rs.getString(8)+"                                          *");
+                           System.out.println("**************************************************************************************");
                        }
             }catch(SQLException e){
                 e.printStackTrace();
             }
         System.out.println("");
         System.out.println("--------------------------------");
-        System.out.println("1. Update Infotmation           ");
-        System.out.println("2. Exit                         ");
+        System.out.println("1. Insert Infotmation           ");
+        System.out.println("2. Update Infotmation           ");
+        System.out.println("3. Exit                         ");
         System.out.println("Select your choose :");
         int choose = s1.nextInt();
         
         if(choose == 1){
-            updateInfor(Email);
+            Cust.CustomerInfor(reg);
         }
         else if(choose == 2){
+            updateInfor(Email);
+        }
+        else if(choose == 3){
             mainPage();
         }
         else{
             System.out.println("Invalid number please insert again");
-            DisplayCustomerMenu(Email);
+            DisplayCustomerMenu(Email,reg);
         }
         return choose;
     }
@@ -97,7 +102,7 @@ public class Customer {
         Register reg = new Register();
         Scanner s1 = new Scanner(System.in);
         Scanner s2 = new Scanner(System.in);
-        String updateSql ="";
+        String updateSql ="",updateSql1 ="";
         Connection myConObj = null;
         System.out.println("--------------------------------");
         System.out.println("1. Change Password              ");
@@ -110,36 +115,21 @@ public class Customer {
         if(choose == 1){
             System.out.println("Please Enter your new Password :");
             String Password = s2.nextLine();
-            updateSql = "UPDATE Register SET Password ='" + Password + "' WHERE Email = '" + Email +"'";
-        } 
-        else if(choose == 2){
-            System.out.println("Please Enter your new Address :");
-            String Address = s2.nextLine();
-            updateSql = "UPDATE Register SET Address ='" + Address + "' WHERE Email = '" + Email +"'";
-        }
-        else if(choose == 3){
-            System.out.println("Please Enter your new States :");
-            String States = s2.nextLine();
-            updateSql = "UPDATE Register SET States ='" + States + "' WHERE Email = '" + Email +"'";
-        }
-        else if(choose == 4){
-            System.out.println("Please Enter your new Phone Number :");
-            String PhoneNo = s2.nextLine();
-            updateSql = "UPDATE Register SET PhoneNo ='" + PhoneNo + "' WHERE Email = '" + Email +"'";
-        }
-        else if(choose == 5){
-            DisplayCustomerMenu(Email);
-        }
-        System.out.println("Are you sure you want update (y/n)");
+            updateSql = "UPDATE Customer SET Password ='" + Password + "' WHERE Email = '" + Email +"'";
+            updateSql1 = "UPDATE Register SET Password ='" + Password + "' WHERE Email = '" + Email +"'";
+            System.out.println("Are you sure you want update (y/n)");
         String choice = s2.nextLine();
         if(choice.equals("y") || choice.equals("Y")){
          try {
              myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
          Statement mystatObj = myConObj.createStatement();
+         Statement mystatObj1 = myConObj.createStatement();
          mystatObj.execute(updateSql);
+         mystatObj.execute(updateSql1);
         } catch (Exception ex) {
             System.out.println(ex);
         }
+         
          System.out.println("Update Sucessfull");
          System.out.println("==================");
          updateInfor(Email);
@@ -149,6 +139,89 @@ public class Customer {
          System.out.println("==================");
          updateInfor(Email);
         }
+        } 
+        else if(choose == 2){
+            System.out.println("Please Enter your new Address :");
+            String Address = s2.nextLine();
+            updateSql = "UPDATE Customer SET Address ='" + Address + "' WHERE Email = '" + Email +"'";
+            System.out.println("Are you sure you want update (y/n)");
+        String choice = s2.nextLine();
+        if(choice.equals("y") || choice.equals("Y")){
+         try {
+             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+         Statement mystatObj = myConObj.createStatement();
+         mystatObj.execute(updateSql);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+         
+         System.out.println("Update Sucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        else if(choice.equals("n") || choice.equals("N")){
+            System.out.println("Update Unsucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        }
+        else if(choose == 3){
+            System.out.println("Please Enter your new States :");
+            String States = s2.nextLine();
+            updateSql = "UPDATE Customer SET States ='" + States + "' WHERE Email = '" + Email +"'";
+            System.out.println("Are you sure you want update (y/n)");
+        String choice = s2.nextLine();
+        if(choice.equals("y") || choice.equals("Y")){
+         try {
+             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+         Statement mystatObj = myConObj.createStatement();
+         mystatObj.execute(updateSql);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+         
+         System.out.println("Update Sucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        else if(choice.equals("n") || choice.equals("N")){
+            System.out.println("Update Unsucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        }
+        else if(choose == 4){
+            System.out.println("Please Enter your new Phone Number :");
+            String PhoneNo = s2.nextLine();
+            updateSql = "UPDATE Customer SET PhoneNumber ='" + PhoneNo + "' WHERE Email = '" + Email +"'";
+            updateSql1 = "UPDATE Register SET PhoneNumber ='" + PhoneNo + "' WHERE Email = '" + Email +"'";
+            System.out.println("Are you sure you want update (y/n)");
+        String choice = s2.nextLine();
+        if(choice.equals("y") || choice.equals("Y")){
+         try {
+             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+         Statement mystatObj = myConObj.createStatement();
+         Statement mystatObj1 = myConObj.createStatement();
+         mystatObj.execute(updateSql);
+         mystatObj.execute(updateSql1);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+         
+         System.out.println("Update Sucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        else if(choice.equals("n") || choice.equals("N")){
+            System.out.println("Update Unsucessfull");
+         System.out.println("==================");
+         updateInfor(Email);
+        }
+        }
+        else if(choose == 5){
+            DisplayCustomerMenu(Email,reg);
+        }
+        
     }
 
 
@@ -165,8 +238,10 @@ public class Customer {
                        System.out.print("Email : ");
                        myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
                        Email = s1.next();
+                       reg.setEmail(Email);
                        System.out.print("Password : ");
                        String Password = s1.next();
+                       reg.setPassword(Password);
                        String query = "Select * from Register WHERE Email ='" + Email + "' and Password='"+ Password +"'";
                        query = "Select * from Register WHERE Password ='" + Password + "'";
                        mystatObj = myConObj.createStatement();

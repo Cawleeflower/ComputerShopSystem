@@ -17,6 +17,7 @@ import java.util.Scanner;
 public class TestLogin {
     public static void main(String[] args){
         Login log = new Login();
+        Register reg = new Register();
         
        Scanner s1 = new Scanner(System.in); 
        Connection myConObj = null;
@@ -26,14 +27,15 @@ public class TestLogin {
             e.printStackTrace();
             }
          
-          int optional = Login.mainPage();
+         while(true){
+             int optional = Login.mainPage();
         
         if (optional == 1){
-            String Email="";
-            Login.DisplayMenu();    
+            Login.DisplayMenu(reg);   
         }
         else if(optional == 2){
-            CustomerRegister.CustRegister();
+            reg = Register.CustRegister();
         }
+         }
     }
 }
