@@ -15,8 +15,9 @@ import java.sql.SQLException;
 public class StaffHomePage {
     public static void main(String[] args) {
        Staff staff = new Staff();
-       Purchases pch = new Purchases();
-       Scanner s1 = new Scanner(System.in); 
+       Purchase pch = new Purchase();
+       Scanner s1 = new Scanner(System.in);
+       StaffClass sc = new StaffClass();
        Connection myConObj = null;
          try{
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
@@ -26,21 +27,24 @@ public class StaffHomePage {
       
        int optional = Staff.mainPage();
         
-        if (optional == 1){
+       if(optional ==1){
+           Staff.addStaff();
+       }
+        if (optional == 2){
             int opt = Staff.subMenu();
             Staff.printStaffInformation(opt);
         }
-        if (optional == 2 ){
+        if (optional == 3 ){
             Delivery.delivery();
            
     }
-         if(optional == 3){
-             Purchases.purchasesMenu();
+         if(optional == 4){
+             Purchase.purchasesMenu();
          }
-          if(optional == 4){
-             
+          if(optional == 5){
+             sc.displayDataStaff();
          }
-           if(optional == 5){
+           if(optional == 6){
              
              //UpdateStaff.updateLogoutTime(myConObj, StaffID);
          }

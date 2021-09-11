@@ -37,7 +37,7 @@ public class UpdateStaff {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
         LocalDateTime now = LocalDateTime.now(); 
         Timestamp timestamp = Timestamp.valueOf(now);
-        String updateSql = "UPDATE Staff SET " + "LogouTime" + "=" +  timestamp + " WHERE StaffID = '" + StaffID +"'";
+        String updateSql = "UPDATE Staff SET " + "LogOuTime" + "=" +  timestamp + " WHERE StaffID = '" + StaffID +"'";
          try {
          Statement mystatObj = con.createStatement();
          mystatObj.execute(updateSql);
@@ -45,4 +45,17 @@ public class UpdateStaff {
           System.out.println(ex);
         }
     }
-}
+    public static void updateLoginTime(Connection con, String StaffID){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now(); 
+        Timestamp timestamp = Timestamp.valueOf(now);
+        String updateSql = "UPDATE Staff SET " + "LogInTime" + "=" +  timestamp + " WHERE StaffID = '" + StaffID +"'";
+         try {
+         Statement mystatObj = con.createStatement();
+         mystatObj.execute(updateSql);
+        } catch (Exception ex) {
+          System.out.println(ex);
+        }
+    }
+    }
+
