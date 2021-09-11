@@ -17,6 +17,12 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.lang.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.List;
+import wagu.Board;
+import wagu.Table;
 
 
 /**
@@ -24,9 +30,9 @@ import java.lang.*;
  * @author nic35
  */
 
-public class Product{
+public abstract class Product{
    
-    private String productName;
+    protected String productName;
     private String warranty;
     private double price;
     private String dateOfManufacture;
@@ -45,11 +51,11 @@ public class Product{
         this.origin = origin;
     }
 
-    public String getProductName() {
+    protected String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
+    protected void setProductName(String productName) {
         this.productName = productName;
     }
 
@@ -86,83 +92,175 @@ public class Product{
     }
     
     //Get product details from users
-    public void getProductDetailsFromUser(Product product) {
+    public void getProductDetailsFromUser() {
         
         //Declare input scanner
         Scanner scan = new Scanner(System.in);
         Scanner scan1 = new Scanner(System.in);
+        boolean repeat = true;
+        String appendedPrice= "";
         
         //Get and as input and set product name
         System.out.println("Please enter product name");
         String productName = scan.nextLine();
-        product.setProductName(productName);
+        setProductName(productName);
         
         //Get and as input and set product detail
         System.out.println("Please enter warranty (1 year)");
         String warranty = scan.nextLine();
-        product.setWarranty(warranty);
+        setWarranty(warranty);
         
         //Get and as input and set price
-        System.out.println("Please enter price (20.00)");
-        double price = scan1.nextDouble();
-        product.setPrice(price);
+        do {
+            System.out.println("Please enter price (20.00)");
+            String price = scan1.nextLine();
+            if (price.matches(".*\\d.*")) {
+                repeat = false;
+            }
+            for (char c : price.toCharArray()) {
+            
+            if (Character.isDigit(c)) {
+                System.out.println("Test");
+                 appendedPrice += c;
+            }
+        }
+        } while(repeat);
+        setPrice(Double.parseDouble(appendedPrice));
         
         //Get and as input and set Date of Manufacture
         System.out.println("Please enter Date of Manufacture (2021-05-12)");
         String manuDate = scan.nextLine();
-        product.setDateOfManufacture(manuDate);
+        setDateOfManufacture(manuDate);
         
         //Get and as input and set Origin
         System.out.println("Please enter Origin (China)");
         String origin = scan.nextLine();
-        product.setOrigin(origin);
+        setOrigin(origin);
     }
     
-    
-    public static void addProduct(Connection con, Product product) {
-        String insertNewSql = "INSERT INTO Product (ProductName, Price, DateOfManufacture, Origin, Warranty)" + " VALUES (?,?,?,?,?)";
-         try {
-         PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
-         preparedStatement.setString(1, product.getProductName());
-         preparedStatement.setDouble(2, product.getPrice());
-         preparedStatement.setString(3, product.getDateOfManufacture());
-         preparedStatement.setString(4, product.getOrigin());
-         preparedStatement.setString(5, product.getWarranty());
-         preparedStatement.executeUpdate();
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-    }
-    
-    public static <T> void updateProduct(Connection con, String columnToUpdate, T newValue, String productName) {
-        String insertNewSql = "Update Product set " + columnToUpdate + "=" + newValue + "where " + "productName=" + productName;
-         try {
-         PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);
-         preparedStatement.executeUpdate();
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-    }
-
-    public static void listProducts(Connection con) {
+    public static String getProductsFromDatabase(Database database) {
+        List<List<String>> listOfLists = new ArrayList<>();
+        List<String> headersList = Arrays.asList("PRODUCTNAME", "PRICE", "DATEOFMANUFACTURE", "ORIGIN", "WARRANTY", "SUBPRODUCTID");
         try {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from Product");
-            ResultSetMetaData rsMetaData = rs.getMetaData();
-            int count = rsMetaData.getColumnCount();
+            Statement stmt = database.getCon().createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Product");
+            ResultSetMetaData rsmd = rs.getMetaData();
             while (rs.next()) {
-                for (int i = 1; i <= count; i++) {
-                    
-                    String columnValue = rs.getString(i);
-                    
-                    if (rsMetaData.getColumnName(i).equals("ProductName")) {
-                     System.out.print(columnValue);   
-                    } 
-                }
-            System.out.println("");
+                List<String> innerList = new ArrayList<>();
+                
+                innerList.add(rs.getString(1));
+                innerList.add(rs.getString(2));
+                innerList.add(rs.getString(3));
+                innerList.add(rs.getString(4));
+                innerList.add(rs.getString(5));   
+                innerList.add(rs.getString(6));  
+                listOfLists.add(innerList);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-      } catch(Exception ex) {
-          System.out.println(ex);
-      }
+        
+        if (!listOfLists.isEmpty()) {
+            Board board = new Board(75);
+            String tableString1 = board.setInitialBlock(new Table(board, 75, headersList, listOfLists).tableToBlocks()).build().getPreview();
+            return tableString1;
+        }
+        return "";
+    }
+    
+    public static boolean insertAgain() {
+        Scanner s1 = new Scanner(System.in);
+        System.out.print("Insert again?: (Y/N)");
+        String choice = s1.nextLine();
+        if (choice.toLowerCase().equals("y")) 
+            return true;
+        else
+            return false;
+    }
+    
+    public void printColumnNames() {
+        System.out.println("\nProduct Name");
+        System.out.println("Price");
+        System.out.println("Date Of Manufacture");
+        System.out.println("Origin");
+        System.out.println("Warranty");
+    }
+    
+    public abstract void addProduct(Database database);
+    
+    public abstract <T> void updateProduct(Database database, String columnToUpdate, String newValue);
+
+    public abstract void listProducts(Database database, Product product);
+    
+    public static String ProductChoice(Database database) {
+        Scanner s1 = new Scanner(System.in);
+        System.out.println("\n" + Product.getProductsFromDatabase(database)); 
+        System.out.println("1. Monitor");
+        System.out.println("2. Harddrive");
+        System.out.println("3. Motherboard");
+        System.out.println("\nWhat type of product to update? (Press '4' to exit)");
+        System.out.print("Please enter your choice: ");
+        return s1.nextLine();
+    }
+    
+    public static ResultSet productExist(Database database, String productName) {
+        String selectSql = "SELECT SubProductId FROM Product WHERE productName='" + productName + "'";
+        try {
+            Statement stmt = database.getCon().createStatement();
+            ResultSet rs = stmt.executeQuery(selectSql);
+            return rs;
+        }catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static String getSubProductId(Database database, String productName) {
+        try{
+            ResultSet rs = productExist(database, productName);
+            if(rs.next()) {
+                return rs.getString(1);    
+            }
+            
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static boolean checkQuantity(Database database, int quantity, String productName) {
+        try {
+            Statement stmt = database.getCon().createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Quantity FROM Warehouses WHERE NameProduct='" + productName + "'");
+            int warehouseQuantity;
+            if (rs.next()) {
+                warehouseQuantity = rs.getInt(1);
+                System.out.println(warehouseQuantity + quantity);
+                if (warehouseQuantity < quantity) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+        return false;
+    }
+    
+    public static int getQuantity(Database database, String productName) {
+        try {
+            Statement stmt = database.getCon().createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Quantity FROM Warehouses WHERE NameProduct='" + productName + "'");
+            int warehouseQuantity;
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+        return 0;
     }
 }

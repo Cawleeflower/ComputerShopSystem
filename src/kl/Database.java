@@ -18,7 +18,7 @@ public class Database {
     
     public Database() {
         try {
-            con = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            con = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
         } catch(SQLException ex) {
             ex.printStackTrace();
         }
