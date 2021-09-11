@@ -165,7 +165,7 @@ public class PurchasingClass{
       public static void insertPurchases(Connection myConObj,String purchasesID, String vendor, String date, String productList, double totalPrice, double price,int quantity, String method){
             Scanner s1 = new Scanner(System.in);
      try{
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             String insertNewUserSQL = "INSERT INTO computershop.Purchase(PurchaseID, Vendor, PurchaseDate, ProductList, TotalPrices, Price, Quantity, PaymentMethod )" + " VALUES (?,?,?,?,?,?,?,?)";
             //String updateUserSQL = "UPDATE computershop.Delivery SET DeliveryID = ?" + " WHERE DeliveryID = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);

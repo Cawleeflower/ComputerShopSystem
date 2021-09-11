@@ -38,7 +38,7 @@ public class Customer {
     public static int DisplayCustomerMenu(String Email,Register reg){
         Scanner s1 = new Scanner(System.in);
         String Password="",CustName="",Address="",States="",DateOfBirth="",CustID="";
-        int phoneNo=0;
+        String phoneNo="";
         CustomerClass Cust = new CustomerClass();
         Connection myConObj=null;
         Statement mystatObj = null;
@@ -46,13 +46,13 @@ public class Customer {
         String query = "Select * from Customer";
         String url = "";
         try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try{
                        query = "Select * from Customer WHERE Email ='" + Email + "'";
-                       myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+                       myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
                        mystatObj = myConObj.createStatement();
                        ResultSet rs = mystatObj.executeQuery(query);
                        ResultSetMetaData rsMetaData = rs.getMetaData();
@@ -83,7 +83,7 @@ public class Customer {
         int choose = s1.nextInt();
         
         if(choose == 1){
-            Cust.CustomerInfor(reg);
+            Cust.CustomerInfor(Email, reg);
         }
         else if(choose == 2){
             updateInfor(Email);
@@ -121,7 +121,7 @@ public class Customer {
         String choice = s2.nextLine();
         if(choice.equals("y") || choice.equals("Y")){
          try {
-             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+             myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
          Statement mystatObj = myConObj.createStatement();
          Statement mystatObj1 = myConObj.createStatement();
          mystatObj.execute(updateSql);
@@ -148,7 +148,7 @@ public class Customer {
         String choice = s2.nextLine();
         if(choice.equals("y") || choice.equals("Y")){
          try {
-             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+             myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
          Statement mystatObj = myConObj.createStatement();
          mystatObj.execute(updateSql);
         } catch (Exception ex) {
@@ -173,7 +173,7 @@ public class Customer {
         String choice = s2.nextLine();
         if(choice.equals("y") || choice.equals("Y")){
          try {
-             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+             myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
          Statement mystatObj = myConObj.createStatement();
          mystatObj.execute(updateSql);
         } catch (Exception ex) {
@@ -199,7 +199,7 @@ public class Customer {
         String choice = s2.nextLine();
         if(choice.equals("y") || choice.equals("Y")){
          try {
-             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+             myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
          Statement mystatObj = myConObj.createStatement();
          Statement mystatObj1 = myConObj.createStatement();
          mystatObj.execute(updateSql);
@@ -233,19 +233,29 @@ public class Customer {
         Statement mystatObj = null;
         ResultSet myResObj = null;
         ResultSet rs;
+        String Password ="";
         try{
             do{
                        System.out.print("Email : ");
-                       myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+                       myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
                        Email = s1.next();
                        reg.setEmail(Email);
-                       System.out.print("Password : ");
-                       String Password = s1.next();
-                       reg.setPassword(Password);
-                       String query = "Select * from Register WHERE Email ='" + Email + "' and Password='"+ Password +"'";
-                       query = "Select * from Register WHERE Password ='" + Password + "'";
+                       System.out.print("Password (if forgot password type '1'): ");
+                       Password = s1.next();
+                       if(String.valueOf(Password).equals("1")){
+                           reg.ForgotPassword(reg);
+                           String query = "SELECT * FROM REGISTER WHERE ='" + Email + "' AND PASSWORD='"+ Password +"'";
+                       query = "SELECT * FROM REGISTER WHERE PASSWORD ='" + Password + "'";
                        mystatObj = myConObj.createStatement();
                        rs = mystatObj.executeQuery(query);
+                       }else{
+                       reg.setPassword(Password);
+                       String query = "SELECT * FROM REGISTER WHERE EMAIL ='" + Email + "' AND PASSWORD='"+ Password +"'";
+                       query = "SELECT * FROM REGISTER WHERE PASSWORD='" + Password + "'";
+                       mystatObj = myConObj.createStatement();
+                       rs = mystatObj.executeQuery(query);
+                       }
+
             }while(!rs.next());
             }catch (SQLException e) {
                        e.printStackTrace();

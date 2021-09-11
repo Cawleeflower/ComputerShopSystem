@@ -21,7 +21,7 @@ public class PaymentMethod extends Payment{
     }
 
     public PaymentMethod(int paymentType, String debitCard, String creditCard, String paymentMethod) {
-        super(paymentMethod);
+      
         this.paymentType = paymentType;
         this.debitCard = debitCard;
         this.creditCard = creditCard;
@@ -33,14 +33,6 @@ public class PaymentMethod extends Payment{
 
     public void setPaymentType(int paymentType) {
         this.paymentType = paymentType;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
     }
 
     public String getDebitCard() {
@@ -59,12 +51,12 @@ public class PaymentMethod extends Payment{
         this.creditCard = creditCard;
     }
     
-    public void SelectPaymentMethods(){
+    public void SelectPaymentMethods(Database database){
        int method;
-       method=method();
+       method=method(database);
        
     }
-     public int method(){
+     public int method(Database database){
        int method=0;
      
        Scanner d=new Scanner(System.in);
@@ -79,56 +71,63 @@ public class PaymentMethod extends Payment{
           method = d.nextInt();
           if(method==1){ 
               
-              debitCard();
+              debitCard(database);
             }
           else if(method==2){ 
-              creditCard();
+              creditCard(database);
        
            }
           else{
             System.out.print("\nOnly can Select 1 or 2.\n");
-            method();
+            method(database);
            }
        }catch(InputMismatchException e){
           System.out.print("\nOnly can enter Integer\n");
-          method();
+          method(database);
        }
        return method;
     }
    
     
-    public String debitCard(){
+    public String debitCard(Database database){
      String debitCard = null;
      Payment payment=new Payment();
+     CustomerClass customer=new CustomerClass();
+     Cart cart=new Cart();
+     Order order = new Order();
      Scanner d=new Scanner(System.in);
      System.out.print("Debit Card");
      System.out.print("\nEnter your Card Number(xxxx-xxxx-xxxx-xxxx):");
           try{
            debitCard = d.nextLine();
            System.out.print("\nSuccesful Pay");
-            payment.outPutPayment(payment, order);
+      
+          payment.outPutPayment(database,payment, order, customer, cart);
            
           }catch(InputMismatchException e){
             System.out.print("\nCard number cannot more than 20 value.");
-            debitCard();
+            debitCard(database);
           }
           return debitCard;
     }
     
-    public String creditCard(){
+    public String creditCard(Database database){
     String creditCard = null;
     Payment payment=new Payment();
+    CustomerClass customer=new CustomerClass();
+     Cart cart=new Cart();
+     Order order = new Order();
      Scanner c=new Scanner(System.in);
      System.out.print("Credit Card");
      System.out.print("\nEnter your Card Number(xxxx-xxxx-xxxx-xxxx):");
           try{
            creditCard = c.nextLine();
            System.out.print("\nSuccesful Pay");
-           payment.outPutPayment(payment, order);
+        payment.outPutPayment(database,payment, order, customer, cart);
            
           }catch(InputMismatchException e){
             System.out.print("\nCard number cannot more than 20 value.");
-            creditCard();
+            creditCard(database);
           }
           return creditCard;}
 }

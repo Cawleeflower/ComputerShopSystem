@@ -22,7 +22,7 @@ public class TestLogin {
        Scanner s1 = new Scanner(System.in); 
        Connection myConObj = null;
          try{
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             }catch (SQLException e) {
             e.printStackTrace();
             }
@@ -36,6 +36,6 @@ public class TestLogin {
         else if(optional == 2){
             reg = Register.CustRegister();
         }
-         }
+      }
     }
 }

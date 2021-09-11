@@ -13,8 +13,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
@@ -27,30 +30,57 @@ import java.util.stream.Collectors;
  */
 public class Order {
     private DeliveryClass delivery;
-    private Register register;
+    private CustomerClass customer;
     private Cart cart;
     private Order order;
-    private String orderId;
+    private String orderId,productName,customerId,cutomerName,customerContent,customerStates;
     private static Double amount;
-    private Double deliveryFee;
-    protected Date dateCreated;
-    private Double subTotal;
+    private Double deliveryFee,totalAmount,discount,totalProductPrice;
+    protected String orderDate;
+    private int productQuantity;
+
   
     public Order(){
       
     }
-    
-    public Order(String orderId,Double amount,Double subTotal){
+
+    public Order(DeliveryClass delivery, CustomerClass customer, Cart cart, Order order, String orderId, Double deliveryFee, Double totalAmount, Double discount, String paymentDate) {
+        this.delivery = delivery;
+        this.customer = customer;
+        this.cart = cart;
+        this.order = order;
         this.orderId = orderId;
-        this.amount = amount;
-        this.delivery=delivery;
-        this.register=register;
-        this.cart=cart;
-        this.order=order;
-        this.subTotal=subTotal;
-        dateCreated = new Date();
+        this.deliveryFee = deliveryFee;
+        this.totalAmount = totalAmount;
+        this.discount = discount;
+        this.orderDate = orderDate;
     }
 
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
+    public String getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
+    }
+    
+    
+    public CustomerClass getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerClass customer) {
+        this.customer = customer;
+    }
+    
     public Order getOrder() {
         return order;
     }
@@ -83,12 +113,12 @@ public class Order {
         this.orderId = OrderId;
     }
 
-    public Double getSubTotal() {
-        return subTotal;
+    public Double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setSubTotal(Double subTotal) {
-        this.subTotal = subTotal;
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
     }
     
     public Double getAmount() {
@@ -107,8 +137,13 @@ public class Order {
         this.amount = amount;
     }
     
-    public Date getDateCreated() {
-        return dateCreated;
+     public String autoDate(){
+    
+                      Date date = Calendar.getInstance().getTime();  
+                      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
+                      String strDate = dateFormat.format(date);  
+                      System.out.println("Today Date: " + strDate); 
+                      return strDate;
     }
     
     public void autoCreateOrderId(Order order, String OrderId)
@@ -129,7 +164,7 @@ public class Order {
              System.out.println("\nOrder ID:"+order.getOrderId());
     }
         
-    public void CalSubTotal(int discount,Cart cart,Order order,Register register,DeliveryClass delivery,String cartList){
+    public void CalSubTotal(int discount,Cart cart,Order order,CustomerClass customer,DeliveryClass delivery,String cartList){
           
             try{
               
@@ -146,7 +181,7 @@ public class Order {
                 System.out.println("\n-----------------------------------------");   
                 System.out.println("|The Amount:           |RM"+cart.getSubTotalPrice()+"\t\t|");
            
-           deliveryFee=order.deliveryFee(delivery, register, "Johor");
+           deliveryFee=order.deliveryFee(delivery, customer);
            
            amount=cart.getSubTotalPrice();
              if(amount<=200.00){
@@ -160,9 +195,9 @@ public class Order {
                discount=50;
              }
                System.out.print("\n|Discount:             |RM"+discount+"\t\t|");
-               subTotal=amount+deliveryFee-discount;
+               totalAmount=amount+deliveryFee-discount;
                System.out.println("\n-----------------------------------------"); 
-               System.out.print("|SubTotal:             |RM"+subTotal+"\t\t|");
+               System.out.print("|SubTotal:             |RM"+totalAmount+"\t\t|");
                System.out.println("\n-----------------------------------------");  
           }
           catch(Exception ex){
@@ -170,33 +205,49 @@ public class Order {
           }
     }
     
-    public Double deliveryFee(DeliveryClass delivery,Register register,String states){
-      if(register.getStates()==states){
-         System.out.print("|Delivery Fee:         |RM"+delivery.calculateState()+"\t\t|");
+    public Double deliveryFee(DeliveryClass delivery,CustomerClass customer){
+      if(customer.getStates()==delivery.getStates()){
+         System.out.print("|Delivery Fee:         |RM"+delivery.getDeliveryFees()+"\t\t|");
          
       }
-      return delivery.calculateState();
+      return delivery.getDeliveryFees();
     }
     
-//    public void runInsertQuery(Connection con,String newOrderId,String newCustomerId,String newCustomerName,String newCustomerContent,String newCustomerStates,String newProductName,int newQuantity,Double newAmount,Double newDelivery,Double newDiscount,Double newSubTotal){        
-//        this.orderId.add(newOrderId);
-//        this.productDetail.add(newProductDetail);
-//        this.
-//        stringorderId = String.join(",", this.orderId);
-//        stringTotalPrice = totalPrice.stream().map(Object::toString).collect(Collectors.joining(","));
-//        stringQuantity = quantity.stream().map(Object::toString).collect(Collectors.joining(","));
-//        String insertNewSql = "INSERT INTO Order(CartId, ProductName, TotalPrice, Quantity, SubTotalPrice)" + "VALUES (?,?,?,?,?)";
-//        try {
-//        Statement insertStmt = con.createStatement();
-//        PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
-//        preparedStatement.setString(1, this.cartId);
-//        preparedStatement.setString(2, stringProductName);
-//        preparedStatement.setString(3, stringTotalPrice);
-//        preparedStatement.setString(4, stringQuantity);
-//        preparedStatement.setDouble(5, subTotalPrice);
-//        preparedStatement.executeUpdate();   
-//        } catch(SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+    public void runInsertQuery(Connection con,String newOrderId,String newDate,String newCustomerId,String newCustomerName,String newCustomerContent,String newCustomerStates,String newProductName,int newQuantity,Double newTotalProductPrice,Double newAmount,Double newDelivery,Double newDiscount,Double newTotalAmount){        
+        this.orderId=newOrderId;
+        this.orderDate=newDate;
+        this.customerId=newCustomerId;
+        this.cutomerName=newCustomerName;
+        this.customerContent=newCustomerContent;
+        this.customerStates=newCustomerStates;
+        this.productName=newProductName;
+        this.productQuantity=newQuantity;
+        this.totalProductPrice=newTotalProductPrice;
+        this.amount=newAmount;
+        this.deliveryFee=newDelivery;
+        this.discount=newDiscount;
+        this.totalAmount=newTotalAmount;
+        String insertNewSql = "INSERT INTO ORDER(ORDERID,ORDERDATE,CUSTID,CUSTNAME,CUSTCONTENT,CUSTSTATES,PRODNAME,PRODQUANTITY,PRODTOTALPRICE,AMOUNT,DELIVERYFEE,DISCOUNT,TOTALAMOUNT)" + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        try {
+        Statement insertStmt = con.createStatement();
+        PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
+        preparedStatement.setString(1, orderId);
+        preparedStatement.setString(2,orderDate);
+        preparedStatement.setString(3, customerId);
+        preparedStatement.setString(4, cutomerName);
+        preparedStatement.setString(5, customerContent);
+        preparedStatement.setString(6, customerStates);
+        preparedStatement.setString(7, productName);
+        preparedStatement.setInt(8, productQuantity);
+        preparedStatement.setDouble(9, totalProductPrice);
+        preparedStatement.setDouble(10, amount);
+        preparedStatement.setDouble(11, deliveryFee);
+        preparedStatement.setDouble(12, discount);
+        preparedStatement.setDouble(13, totalAmount);
+      
+        preparedStatement.executeUpdate();   
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

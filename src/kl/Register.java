@@ -14,7 +14,13 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Random;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 /**
  *
  * @author user
@@ -22,13 +28,13 @@ import java.util.Random;
 public class Register {
     protected String Email,Password;
     String CustName;
-    int phoneNo;
+    String phoneNo;
 
     public Register() {
-        this("","","",0);
+        this("","","","");
     }
 
-    public Register(String Email, String Password, String CustName, int phoneNo) {
+    public Register(String Email, String Password, String CustName, String phoneNo) {
         this.Email = Email;
         this.Password = Password;
         this.CustName = CustName;
@@ -47,7 +53,7 @@ public class Register {
         this.CustName = CustName;
     }
     
-    public void setPhoneNo(int phoneNo) {
+    public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
     }
    
@@ -63,7 +69,7 @@ public class Register {
         return CustName;
     }
 
-    public int getPhoneNo() {
+    public String getPhoneNo() {
         return phoneNo;
     }
 
@@ -73,17 +79,17 @@ public class Register {
     }
     
     
-    public static void insert(String Email, String Password, String CustName,int phoneNo,Connection myConObj){
+    public static void insert(String Email, String Password, String CustName,String phoneNo,Connection myConObj){
     try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-            String insertNewUserSQL = "INSERT INTO Register (Email,Password,CustName,PhoneNumber)" + " VALUES (?,?,?,?)";
-            String updateUserSQL = "UPDATE Register SET Email = ?" + " WHERE Email = ?";
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
+            String insertNewUserSQL = "INSERT INTO REGISTER (EMAIL,PASSWORD,CUSTNAME,PHONENUMBER)" + " VALUES (?,?,?,?)";
+            String updateUserSQL = "UPDATE REGISTER SET EMAIL = ?" + " WHERE EMAIL = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
             
             pstmt.setString(1,Email);
             pstmt.setString(2, Password);
             pstmt.setString(3, CustName);
-            pstmt.setInt(4, phoneNo);
+            pstmt.setString(4, phoneNo);
 
             
             
@@ -93,15 +99,74 @@ public class Register {
             e.printStackTrace();
         }
 }
-    public static Register CustRegister(){
+    public static Boolean ActivationCode(String Email) {
+
+        final String username = "lol1234abd@gmail.com";
+        final String password = "abc@abc123";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        String random="";
+        Scanner s1 = new Scanner(System.in);
+        
+        javax.mail.Session session = javax.mail.Session.getInstance(props,
+          new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+          });
+
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("lol1234abd@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO,
+            InternetAddress.parse(Email));
+            message.setSubject("Activation Code");
+            Random rd=new Random();
+                        HashSet<Integer> set= new HashSet<Integer>();
+                        while(set.size()<1)
+                        {
+                            int ran=rd.nextInt(9999)+10000;
+                            set.add(ran);
+                        }
+                        int len = 5;
+                        random=String.valueOf(len);
+                        for(int  random1:set)
+                        {
+                            random=Integer.toString(random1);
+                        }
+            message.setText("Dear Mail Crawler,"
+                + "\n\n Here is your activation code, Activation code:"+random+".");
+
+            javax.mail.Transport.send(message);
+
+
+        } catch (MessagingException e) {
+                e.printStackTrace();
+        }
+        System.out.println("Enter Activation code:");
+        String code = s1.nextLine();
+        
+        if(code == random){
+            return true;
+        }else
+            return false;
+        
+    }
+    
+    public static Register CustRegister(String random){
         Connection myConObj = null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
-        String query = "Select * from Register";
+        String query = "SELECT * FROM REGISTER";
         String url = "";
         
         try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             mystatObj = myConObj.createStatement();
             myResObj = mystatObj.executeQuery(query);
 
@@ -110,7 +175,6 @@ public class Register {
         }
         Register register = new Register();
         Scanner s1 = new Scanner(System.in);
-        Scanner s2 = new Scanner(System.in);
 
         System.out.print("Enter Your Email:");
         String Email = s1.nextLine();
@@ -122,10 +186,73 @@ public class Register {
         String CustName = s1.nextLine();
         register.setCustName(CustName);
         System.out.print("Enter Your Phone Number:");
-        int phoneNo = s2.nextInt();
+        String phoneNo = s1.nextLine();
         register.setPhoneNo(phoneNo);
-    
+        
+        ActivationCode(Email);
+        
+        if(true){
             Register.insert(register.getEmail(),register.getPassword(),register.getCustName(),register.getPhoneNo(),myConObj);
+            System.out.println("Register Successfully\n");
+        }else{
+            System.out.println("Activation code invalid\n");
+        }
         return register;
+    }
+    
+    public static void ForgotPassword(Register reg) {
+
+        final String username = "lol1234abd@gmail.com";
+        final String password = "abc@abc123";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        Scanner s1 = new Scanner(System.in);
+        String replacedPassword= "";
+        
+        
+        System.out.println("Enter your Email:");
+        String Email = s1.nextLine();
+        
+        javax.mail.Session session = javax.mail.Session.getInstance(props,
+          new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+          });
+
+        try {
+            
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("lol1234abd@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO,
+            InternetAddress.parse(Email));
+            message.setSubject("Your Password");
+
+            try {
+                Connection myConObj=DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
+                String query = "SELECT * FROM REGISTER WHERE EMAIL = '" + Email + "'";
+                Statement stmt = myConObj.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                if (rs.next()) {
+                    replacedPassword= rs.getString("Password");
+                }
+            }catch(SQLException ex) {
+                ex.printStackTrace();
+            }
+            
+            message.setText("Dear Mail Crawler,"
+                + "\n\n Here is your Password, Password:"+replacedPassword+".");
+
+            javax.mail.Transport.send(message);
+
+
+        } catch (MessagingException e) {
+                e.printStackTrace();
+        }
+        
     }
 }

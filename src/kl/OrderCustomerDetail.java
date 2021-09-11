@@ -12,7 +12,7 @@ package kl;
 public class OrderCustomerDetail {
     private String customerName,email,address,status;
     private int phoneNo;
-    private Register register;
+    private CustomerClass customer;
 
     public OrderCustomerDetail() {
     }
@@ -20,18 +20,18 @@ public class OrderCustomerDetail {
     public OrderCustomerDetail(String customerName, String email, String address, String status, int phoneNo) {
         this.customerName = customerName;
         this.email = email;
-        this.register=register;
+        this.customer=customer;
         this.address = address;
         this.status = status;
         this.phoneNo = phoneNo;
     }
 
-    public Register getRegister() {
-        return register;
+    public CustomerClass getCustomer() {
+        return customer;
     }
 
-    public void setRegister(Register register) {
-        this.register = register;
+    public void setCustomer(CustomerClass customer) {
+        this.customer = customer;
     }
 
     public String getCustomerName() {
@@ -74,11 +74,13 @@ public class OrderCustomerDetail {
         this.phoneNo = phoneNo;
     }
     
-    public void CustomerDetail(Register register){
+    public void CustomerDetail(CustomerClass customer){
       System.out.println("------------------------------------------------------");
-      System.out.print("Content Name:"+register.getCustName()+"\t\t\tCustomer Id:"+register.getCustID());
-      System.out.print("\nAddress:"+register.getAddress()+"\t\t\tStates:"+register.getStates());
-      System.out.print("\nContent Number:"+register.getPhoneNo());
+      System.out.print("Content Name:"+customer.getCustName()+"\t\t\tCustomer Id:"+customer.getCustID());
+      System.out.print("\nAddress:"+customer.getAddress()+"\t\t\tStates:"+customer.getStates());
+      System.out.print("\nContent Number:"+customer.getPhoneNo());
       System.out.println("\n------------------------------------------------------");
+      
+        System.out.println(""+customer.toString());
     }
 }

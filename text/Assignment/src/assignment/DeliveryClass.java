@@ -99,7 +99,7 @@ public class DeliveryClass {
         public static void insertDelivery(Connection myConObj, String random, String date, String deliveryCompany, String details, String address, String states, double deliveryFees){
             Scanner s1 = new Scanner(System.in);
      try{
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             String insertNewUserSQL = "INSERT INTO computershop.Delivery(DeliveryID, DeliveryDate, DeliveryCompany, Details, Address, States, DeliveryFees )" + " VALUES (?,?, ?,?,?,?,?)";
             //String updateUserSQL = "UPDATE computershop.Delivery SET DeliveryID = ?" + " WHERE DeliveryID = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);

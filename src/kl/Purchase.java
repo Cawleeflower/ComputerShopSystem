@@ -26,7 +26,7 @@ import java.util.Scanner;
  * @author User
  */
 public class Purchase {
-     private static HashMap<String, Integer> Product = new HashMap<String, Integer>();
+      private static HashMap<String, Integer> Product = new HashMap<String, Integer>();
       public static void purchaseInsert(){
        
        PurchasingClass ps = new PurchasingClass();
@@ -43,24 +43,9 @@ public class Purchase {
             Scanner s1 = new Scanner(System.in); 
             Scanner s2 = new Scanner(System.in); 
             System.out.println("***************************************************************");
-            System.out.println("*                     4:3 Screen - RM 100                     *");
-            System.out.println("*                     16:9 Screen - RM 200                    *");
-            System.out.println("*                     21:9 Screen - RM 400                    *");
-            System.out.println("***************************************************************");
-            System.out.println("*                     Standard-ATX - RM 125                   *");
-            System.out.println("*                     Mirco-ATX - RM 100                      *");
-            System.out.println("*                     Mini-TX - RM 85                         *");
-            System.out.println("***************************************************************");
-            System.out.println("*                     CPU - Intel i5 - RM 350                 *");
-            System.out.println("*                     CPU - Intel i7 - RM 450                 *");
-            System.out.println("*                     CPU - AMD RYZEN 5 - RM 380              *");
-            System.out.println("*                     CPU - AMD RYZEN 7 - RM 480              *");
-            System.out.println("***************************************************************");
-            System.out.println("*                     HDD - 4RAM - RM 200                     *");
-            System.out.println("*                     HDD - 8RAM - RM 400                     *");
-            System.out.println("***************************************************************");
-            System.out.println("*                     SSD - 4RAM - RM 300                     *");
-            System.out.println("*                     SSD - 8RAM - RM 400                     *");
+            System.out.println("*                     MotherBoard - RM 100                    *");
+            System.out.println("*                     Harddirve -  RM 80                      *");
+            System.out.println("*                     Monitor -  RM 180                       *");
             System.out.println("***************************************************************");
             System.out.println("");
             ps.setVendor("L&L Supplier");
@@ -89,10 +74,11 @@ public class Purchase {
                       
             System.out.print("Enter the Product Name : ");
             String name = s2.nextLine();
+            name = compareProduct(name);
             ps.setProductList(name);
             System.out.print("Please enter the price : ");
             int prices = s1.nextInt(); 
-            
+            prices = comparePrice(prices, name);
             ps.setPrice(prices);
             System.out.print("Please enter quantity : ");
             int quantity = s1.nextInt();
@@ -252,8 +238,8 @@ public class Purchase {
            String Method = s2.nextLine();
            ps.setPaymentMethod(Method);
            if (Method.equals("Credit Card")){
-                System.out.println(" Visa");
-                System.out.println(" Master");
+                System.out.println("Visa");
+                System.out.println("Master");
                 System.out.print("Plases Enter Visa or Master : ");
                 String type = s1.next();
                 ps.setCreditType(type);
@@ -326,14 +312,43 @@ public class Purchase {
        }
         public static String compareProduct(String name){
             //TO Do make sure the product true
-            if (name.equals("4:3 Screen")){
-                
+            Scanner s2 = new Scanner(System.in);
+            if (name.equals("MotherBoard")){
             }
-            else 
-                System.out.println("This Product Did not sell by the supplier");
-                
-            return name ;
+            if (name.equals("Harddirve")){
+            }
+            if(name.equals("Monitor")){
+            }
+            else {
+                  name = "";
+                  System.out.println("This Product Is Invalid Incorrect");
+                  System.out.print("Enter the Product Name : ");
+                  name = s2.nextLine();
+                 
+                  return name;
+                 }     
+            return name  ;
            
         }
-        
+        public static int comparePrice(int prices, String name){
+            Scanner s1 = new Scanner(System.in);
+            if (name.equals("MotherBoard")){
+                prices = 100;
+            }
+            if (name.equals("Harddirve")){
+                prices = 80;
+            }
+            if(name.equals("Monitor")){
+                prices = 180;
+            }
+            else{
+                 prices = 0;
+                  System.out.println("This Product Of The Prices Incorrect");
+                  System.out.print("Enter the Product Price : ");
+                  prices = s1.nextInt();
+                 
+                  return prices;
+            }
+            return prices;
+        }
 }

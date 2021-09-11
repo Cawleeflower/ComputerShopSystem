@@ -17,7 +17,10 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.time.LocalDateTime; 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -28,19 +31,21 @@ import java.util.stream.Collectors;
 public class Payment {
     private String paymentMethod,paymentId;
     private Order order;
+    private Double paymentAmount;
     private PaymentMethod payMethod;
-    protected Date dateCreated;
+    protected String paymentDate;
     
     public Payment(){
     
     }
     
-    public Payment(String paymentMethod){
+    public Payment(String paymentMethod,String paymentID,Double paymentAmount){
        this.paymentMethod=paymentMethod;
        this.order=order;
        this.paymentId=paymentId;
        this.payMethod=payMethod;
-       dateCreated = new Date();
+       this.paymentAmount=paymentAmount;
+       this.paymentDate=paymentDate;
     }
 
     public String getPaymentId() {
@@ -51,10 +56,22 @@ public class Payment {
         this.paymentId = paymentId;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
+    public Double getPaymentAmount() {
+        return paymentAmount;
     }
-    
+
+    public void setPaymentAmount(Double paymentAmount) {
+        this.paymentAmount = paymentAmount;
+    }
+
+    public String getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(String paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
     public Order getOrder() {
         return order;
     }
@@ -97,16 +114,25 @@ public class Payment {
              System.out.println("\nPayment ID:"+payment.getPaymentId());
     }
     
-    public void outPutPayment(Payment payment,Order order,Customer customer,Cart cart){
+    public String autoDate(){
+    
+                      Date date = Calendar.getInstance().getTime();  
+                      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");  
+                      String strDate = dateFormat.format(date);  
+                    
+                      return strDate;
+    }
+    
+    public void outPutPayment(Database database, Payment payment,Order order,CustomerClass customer,Cart cart){
         System.out.println("\n\t\tComputer Shop");
         System.out.println("\t1/7 Taman PL, 1/5 Jalan KaXiang");
         System.out.println("  \tKuala Lao,Ampang 68000");
         System.out.println("------------------------------------------------------");
         System.out.println("|\t\tPayment Receipt");
         System.out.println("|Payment ID:"+payment.getPaymentId()+"Order ID:"+order.getOrderId());
-        System.out.println("|Customer ID:"+"Date:"+payment.getDateCreated());
-       // System.out.println("|"+cart.toString(con));
-        System.out.println("|Total:"+order.getSubTotal());
+        System.out.println("|Customer ID:"+customer.getCustID()+"Date:"+payment.autoDate());
+        System.out.println("|"+cart.toString(database.getCon()));
+        System.out.println("|Total:"+order.getTotalAmount());
         System.out.println("|Payment Method:"+payment);
         System.out.println("--------------------------------------------------------");
         System.out.println("");
@@ -114,25 +140,22 @@ public class Payment {
        
     }
     
-//     public void runInsertQuery(Connection con,String newPaymentId,String newOrderId,String newCustomerId,String newCustomerName,String newCustomerContent,String newCustomerStates,String newProductName,int newQuantity,Double newAmount,Double newDelivery,Double newDiscount,Double newSubTotal){        
-//        this.orderId.add(newOrderId);
-//        this.productDetail.add(newProductDetail);
-//        this.
-//        stringpaymentId = String.join(",", this.paymentId);
-//        stringTotalPrice = totalPrice.stream().map(Object::toString).collect(Collectors.joining(","));
-//        stringQuantity = quantity.stream().map(Object::toString).collect(Collectors.joining(","));
-//        String insertNewSql = "INSERT INTO Order(CartId, ProductName, TotalPrice, Quantity, SubTotalPrice)" + "VALUES (?,?,?,?,?)";
-//        try {
-//        Statement insertStmt = con.createStatement();
-//        PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
-//        preparedStatement.setString(1, this.cartId);
-//        preparedStatement.setString(2, stringProductName);
-//        preparedStatement.setString(3, stringTotalPrice);
-//        preparedStatement.setString(4, stringQuantity);
-//        preparedStatement.setDouble(5, subTotalPrice);
-//        preparedStatement.executeUpdate();   
-//        } catch(SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+     public void runInsertQuery(Connection con,String newPaymentId,String newPaymentDate,Double newPaymentAmount,String newPaymentMethod){        
+        this.paymentId=newPaymentId;
+        this.paymentAmount=newPaymentAmount;
+        this.paymentMethod=newPaymentMethod;
+        this.paymentDate=newPaymentDate;
+        String insertNewSql = "INSERT INTO PAYMENT(PAYMENTID, PAYMENTDATE, PAYMENTAMOUNT, PAYMENTMETHOD)" + "VALUES (?,?,?,?)";
+        try {
+        Statement insertStmt = con.createStatement();
+        PreparedStatement preparedStatement = con.prepareStatement(insertNewSql);   
+        preparedStatement.setString(1, this.paymentId);
+        preparedStatement.setString(2, paymentDate);
+        preparedStatement.setDouble(3, paymentAmount);
+        preparedStatement.setString(4, paymentMethod);
+        preparedStatement.executeUpdate();   
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

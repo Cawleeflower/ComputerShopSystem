@@ -18,7 +18,7 @@ import java.util.*;
  * @author User
  */
 public class Delivery {
-    private static HashMap<String, Integer> Product = new HashMap<String, Integer>();
+     private static HashMap<String, Integer> Product = new HashMap<String, Integer>();
     public static void delivery(){
         Scanner s1 = new Scanner(System.in);
         Scanner s2 = new Scanner(System.in);

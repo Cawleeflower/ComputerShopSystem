@@ -22,13 +22,13 @@ import java.util.Random;
 public class CustomerClass {
     protected String Email,Password;
     String CustID,CustName,Address,States,DateOfBirth;
-    int phoneNo;
+    String phoneNo;
 
     public CustomerClass() {
-        this("","","","","","",0,"");
+        this("","","","","","","","");
     }
 
-    public CustomerClass(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID) {
+    public CustomerClass(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, String phoneNo,String CustID) {
         this.CustID = CustID;
         this.Email = Email;
         this.Password = Password;
@@ -67,7 +67,7 @@ public class CustomerClass {
         this.DateOfBirth = DateOfBirth;
     }
 
-    public void setPhoneNo(int phoneNo) {
+    public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
     }
 
@@ -99,15 +99,15 @@ public class CustomerClass {
         return DateOfBirth;
     }
 
-    public int getPhoneNo() {
+    public String getPhoneNo() {
         return phoneNo;
     }
     
     
     
-    public static void insert(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, int phoneNo,String CustID,Connection myConObj){
+    public static void insert(String Email, String Password, String CustName, String Address, String States, String DateOfBirth, String phoneNo,String CustID,Connection myConObj){
     try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             String insertNewUserSQL = "INSERT INTO Customer (Email,Password,CustName,Address,States,PhoneNumber,DateOfBirth,CustID)" + " VALUES (?,?,?,?,?,?,?,?)";
             String updateUserSQL = "UPDATE Customer SET Email = ?" + " WHERE Email = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
@@ -117,7 +117,7 @@ public class CustomerClass {
             pstmt.setString(3, CustName);
             pstmt.setString(4, Address);
             pstmt.setString(5, States);
-            pstmt.setInt(6, phoneNo);
+            pstmt.setString(6, phoneNo);
             pstmt.setString(7, DateOfBirth);
             pstmt.setString(8, CustID);
             
@@ -129,15 +129,19 @@ public class CustomerClass {
         }
 }
     
-    public static void CustomerInfor(Register reg){
+    public static void CustomerInfor(String Email, Register reg){
         Connection myConObj = null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
-        String query = "Select * from Customer";
+        String replacedEmail = "";
+        String replacedPassword = "";
+        String replacedCustName = "";
+        String replacedPhoneNumber = "";
+        String query = "SELECT * FROM CUSTOMER";
         String url = "";
         
         try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             mystatObj = myConObj.createStatement();
             myResObj = mystatObj.executeQuery(query);
 
@@ -162,13 +166,35 @@ public class CustomerClass {
                             random=Integer.toString(random1);
                             Cust.setCustID(random);
                         }
-        System.out.println("Enter Your Email:"+reg.getEmail());
-        Cust.setEmail(reg.Email);
-        System.out.println("Enter Your Password:"+reg.getPassword());
-        Cust.setPassword(reg.Password);
+        if (Email.equals("")) {
+            System.out.println("RAN IN EMAIL.equals");
+            replacedEmail = reg.getEmail();
+            replacedPassword = reg.getPassword();
+            replacedCustName = reg.getCustName();
+            replacedPhoneNumber = reg.getCustName();
+        } else {
+            try {
+                query = "SELECT * FROM REGISTER WHERE EMAIL = '" + Email + "'";
+                Statement stmt = myConObj.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                if (rs.next()) {
+                    replacedEmail = rs.getString("Email");
+                    replacedPassword= rs.getString("Password");
+                    replacedCustName = rs.getString("CustName");
+                    replacedPhoneNumber = rs.getString("PhoneNumber");
+                }
+            }catch(SQLException ex) {
+                ex.printStackTrace();
+            }
+            
+        }
+        System.out.println("Enter Your Email:"+replacedEmail);
+        Cust.setEmail(replacedEmail);
+        System.out.println("Enter Your Password:"+replacedPassword);
+        Cust.setPassword(replacedPassword);
 
-        System.out.println("Enter Your Name:"+reg.getCustName());
-        Cust.setCustName(reg.CustName);
+        System.out.println("Enter Your Name:"+replacedCustName);
+        Cust.setCustName(replacedCustName);
 
         System.out.print("Enter Your Address:");
         String Address = s1.nextLine();
@@ -176,13 +202,11 @@ public class CustomerClass {
         System.out.print("Enter Your Address States:");
         String States = s1.nextLine();
         Cust.setStates(States);
-        System.out.println("Enter Your Phone Number:"+reg.getPhoneNo());
-        Cust.setPhoneNo(reg.phoneNo);
-        System.out.print("Enter Your Date Of Birth(YYYY/MM/DD):");
+        System.out.println("Enter Your Phone Number:"+replacedPhoneNumber);
+        Cust.setPhoneNo(replacedPhoneNumber);
+        System.out.print("Enter Your Date Of Birth(YYYY-MM-DD):");
         String DateOfBirth = s1.nextLine();
         Cust.setDateOfBirth(DateOfBirth);
-    
-            Cust.insert(Cust.getEmail(),Cust.getPassword(),Cust.getCustName(),Cust.getAddress(),Cust.getStates(),Cust.getDateOfBirth(),Cust.getPhoneNo(),Cust.getCustID(),myConObj);
-        
+
     }
 }

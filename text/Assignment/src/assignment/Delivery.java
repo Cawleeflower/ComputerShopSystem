@@ -29,7 +29,7 @@ public class Delivery {
         Statement mystatObj = null;
         ResultSet myResObj = null;
             try{
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             }catch (SQLException e) {
             e.printStackTrace();
             }

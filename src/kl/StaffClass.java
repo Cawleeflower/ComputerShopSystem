@@ -105,8 +105,8 @@ public class StaffClass {
     public static void insertStaff(Connection myConObj,String StaffID, String Name, int Age, String Email, String LogInTime, String LogOutTime, String ContatcNumber, String Address, String Password ){
             Scanner s1 = new Scanner(System.in);
      try{
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-            String insertNewUserSQL = "INSERT INTO computershop.Staff(StaffID, Name, Age, Email, LogInTime ,LogOutTime, ContactNumber,Address, Password  )" + " VALUES (?,?,?,?,?,?,?,?,?)";
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
+            String insertNewUserSQL = "INSERT INTO NGPHENGLOONG.STAFF(STAFFID, NAME, AGE, EMAIL, LOGINTIME,LOGOUTTIME, CONTACTNUMBER,ADDRESS, PASSWORD  )" + " VALUES (?,?,?,?,?,?,?,?,?)";
             //String updateUserSQL = "UPDATE computershop.Delivery SET DeliveryID = ?" + " WHERE DeliveryID = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
             pstmt.setString(1, StaffID);
@@ -133,7 +133,7 @@ public class StaffClass {
         Connection myConObj = null;
         Statement mystatObj = null;
         ResultSet myResObj = null;
-        String query = "Select * from computershop.Staff";
+        String query = "SELECT * FROM STAFF";
         String url = "";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
         LocalDateTime now = LocalDateTime.now(); 
@@ -143,16 +143,16 @@ public class StaffClass {
                 System.out.print("| Staff ID :        Name        :         Email         :     Loging Time     :     Logout Time     :   Contact Number     :         Address                  |\n");
                 System.out.print("|----------:--------------------:-----------------------:---------------------:---------------------:----------------------:---------------------------------|\n");
         try {
-            myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+            myConObj = DriverManager.getConnection("jdbc:derby://localhost:1527/test", "ngphengloong", "123");
             mystatObj = myConObj.createStatement();
             myResObj = mystatObj.executeQuery(query);
             while(myResObj.next()){
-                String StaffID = myResObj.getString("StaffID");
-                String Name = myResObj.getString("Name");
-                String Email = myResObj.getString("Email");
-                String LogInTime = myResObj.getString("LogInTime");
-                String LogOutTime = myResObj.getString("LogOutTime");
-                String ContactNumber = myResObj.getString("ContactNumber");
+                String StaffID = myResObj.getString("STAFFID");
+                String Name = myResObj.getString("NAME");
+                String Email = myResObj.getString("EMAIL");
+                String LogInTime = myResObj.getString("LOGINTIME");
+                String LogOutTime = myResObj.getString("LOGOUTTIME");
+                String ContactNumber = myResObj.getString("CONTACTNUMBER");
                 String Address = myResObj.getString("Address");
                 System.out.println("|"+StaffID  +"    \t: "+ Name + "        \t: " + Email + "   \t: " + LogInTime +"\t:" + LogOutTime  + "              \t:" + ContactNumber  + "       \t:" + Address + "          \t\t |");
                 System.out.print("|-------------------------------------------------------------------------------------------------------------------------------------------------------------|\n");

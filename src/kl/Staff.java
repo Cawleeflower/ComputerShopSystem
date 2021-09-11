@@ -26,9 +26,7 @@ public class Staff {
      * @param args the command line arguments
      */
    public static void printStaffInformation(int optional){
-       UpdateStaff upstf = new UpdateStaff();
-      // StaffHomePage stfhp = new StaffHomePage();
-       
+        UpdateStaff upstf = new UpdateStaff();
        Connection myConObj = null;
        Statement mystatObj = null;
        ResultSet myResObj = null;
@@ -146,10 +144,11 @@ public class Staff {
 
                 System.out.print("Plases Enter New Staff ID : ");
                 String StaffID = s1.nextLine();
-                StaffID = Staff(StaffID);
+                StaffID = mStaff(StaffID);
                 sc.setStaffID(StaffID);
                 System.out.print("Plaese Enter New Your Name : ");
                 String Name = s2.nextLine();
+                Name = mName(Name);
                 sc.setName(Name);
                 System.out.print("Plases Enter Your Age : ");
                 int Age = s1.nextInt();
@@ -173,7 +172,7 @@ public class Staff {
                 StaffClass.insertStaff(myConObj, sc.getStaffID(), sc.getName(), sc.getAge(), sc.getEmail(), null , null , sc.getContactNumber(), sc.getAddress(), sc.getPassword());
          
    }
-   public static String Staff(String StaffID){
+   public static String mStaff(String StaffID){
        Connection myConObj = null;
        Statement mystatObj = null;
        ResultSet myResObj = null;
@@ -188,25 +187,51 @@ public class Staff {
                 mystatObj = myConObj.createStatement();
                 String query = "Select * from Staff WHERE StaffID='" + StaffID + "'";
                 ResultSet rs = mystatObj.executeQuery(query);
-               
-               rs.next(); 
-                   StaffID = rs.getString("StaffID");
-                   
-                    if(StaffID.compareTo(StaffID)==0){
-                        System.out.println("This Staff ID Already Exits, Plaese Enter The New Staff");
-                        StaffID = "";
-                        System.out.print("Plases Enter New Staff ID : ");
-                        StaffID = s1.nextLine();
-                        return StaffID;
-                    }
-                    else{
-                       
-                    }
+              if(!rs.next()) {
+                   //StaffID = rs.getString("StaffID");
+                   return StaffID;
+               } else {
+                   System.out.println("This Staff ID Already Exits, Plaese Enter The New Staff");
+                   StaffID = "";
+                   System.out.print("Plases Enter New Staff ID : ");
+                   StaffID = s1.nextLine();
+                   return StaffID;
+               }
                
             } catch (SQLException e) {
             e.printStackTrace();
             }
            return StaffID;
+   }
+   public static String mName(String Name){
+        Connection myConObj = null;
+        Statement mystatObj = null;
+         Scanner s1 = new Scanner(System.in);
+            try{
+                myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
+                }catch (SQLException e) {
+                 e.printStackTrace();
+                 }
+            String url = "";
+            try{
+                mystatObj = myConObj.createStatement();
+                String query = "Select * from Staff WHERE Name='" + Name + "'";
+                ResultSet rs = mystatObj.executeQuery(query);
+              if(!rs.next()) {
+                   //StaffID = rs.getString("StaffID");
+                   return Name;
+               } else {
+                   System.out.println("This Name Already Exits, Plaese Enter The New Staff");
+                   Name = "";
+                   System.out.print("Plases Enter New Name : ");
+                   Name = s1.nextLine();
+                   return Name;
+               }
+               
+            } catch (SQLException e) {
+            e.printStackTrace();
+            }
+           return Name;
    }
    }
 
