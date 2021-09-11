@@ -24,12 +24,15 @@ public class DeliveryClass {
     private String States;
     private String Address;
     private double deliveryFees;
+    private String Product;
+    private String Status;
+    private String CustID;
 
     public DeliveryClass() {
-        this("","","","","","",0.0);
+        this("","","","","","",0.0,"","","");
     }
 
-    public DeliveryClass(String DeliveryID, String DeliveryCompany, String Details, String DateDelivery,String States, String Address, double deliveryFees) {
+    public DeliveryClass(String DeliveryID, String DeliveryCompany, String Details, String DateDelivery,String States, String Address, double deliveryFees, String Product, String Status, String CustID) {
         this.DeliveryID = DeliveryID;
         this.DeliveryCompany = DeliveryCompany;
         this.Details = Details;
@@ -37,6 +40,9 @@ public class DeliveryClass {
         this.States = States;
         this.Address = Address;
         this.deliveryFees = deliveryFees;
+        this.Product = Product;
+        this.Status = Status;
+        this.CustID = CustID;
     }
 
     public String getDeliveryID() {
@@ -94,13 +100,37 @@ public class DeliveryClass {
     public void setDeliveryFees(double deliveryFees) {
         this.deliveryFees = deliveryFees;
     }
+
+    public String getProduct() {
+        return Product;
+    }
+
+    public void setProduct(String Product) {
+        this.Product = Product;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String Status) {
+        this.Status = Status;
+    }
+
+    public String getCustID() {
+        return CustID;
+    }
+
+    public void setCustID(String CustID) {
+        this.CustID = CustID;
+    }
     
     
-        public static void insertDelivery(Connection myConObj, String random, String date, String deliveryCompany, String details, String address, String states, double deliveryFees){
+        public static void insertDelivery(Connection myConObj, String random, String date, String deliveryCompany, String details, String address, String states, double deliveryFees, String Status, String CustID){
             Scanner s1 = new Scanner(System.in);
      try{
             myConObj = DriverManager.getConnection("jdbc:mysql://db4free.net:3306/computershop", "ngphengloong", "lolhaha123");
-            String insertNewUserSQL = "INSERT INTO computershop.Delivery(DeliveryID, DeliveryDate, DeliveryCompany, Details, Address, States, DeliveryFees )" + " VALUES (?,?, ?,?,?,?,?)";
+            String insertNewUserSQL = "INSERT INTO computershop.Delivery(DeliveryID, DeliveryDate, DeliveryCompany, Details, Address, States, DeliveryFees, Status, CustID )" + " VALUES (?,?,?,?,?,?,?,?,?)";
             //String updateUserSQL = "UPDATE computershop.Delivery SET DeliveryID = ?" + " WHERE DeliveryID = ?";
             PreparedStatement pstmt = myConObj.prepareStatement(insertNewUserSQL);
             pstmt.setString(1, random);
@@ -110,8 +140,9 @@ public class DeliveryClass {
             pstmt.setString(5, address);
             pstmt.setString(6, states);
             pstmt.setDouble(7, deliveryFees);
-           
-          
+            pstmt.setString(8, Status);
+            pstmt.setString(9, CustID);
+            
             System.out.println("Please comfirm the information is correct(Yes/No):");
             String Comfirm = s1.nextLine();
             Comfirm.toLowerCase();
@@ -119,6 +150,8 @@ public class DeliveryClass {
                 pstmt.executeUpdate();
                 System.out.println("===============================");
                 System.out.println("Successfull");
+                  
+                Delivery.delivery();
             }else{
                 System.out.println("===============================");
                 System.out.println("The data wouldn't be save");
@@ -131,8 +164,8 @@ public class DeliveryClass {
         }          
     
         }
-        public static void updateDelivery(Connection myConObj, String deliveryID, String details, String address){
-            String updateSql = "UPDATE Delivery SET " + "Details" + "=" + "'"+ details + "'" + " WHERE DeliveryID = '" + deliveryID +"'";
+        public static void updateDelivery(Connection myConObj, String deliveryID, String details, String status){
+            String updateSql = "UPDATE Delivery SET " + "Details" + "=" + "'"+ details + "'" +",Status"+ status + "'" + " WHERE DeliveryID = '" + deliveryID +"'";
         try {
             Statement mystatObj = myConObj.createStatement();
             
@@ -147,7 +180,7 @@ public class DeliveryClass {
             double st =0;
             
            if(this.States.equals("Johor"))
-               st = 10;
+               st = 12;
            else if(this.States.equals("Selangor"))
                st = 5;
            else if(this.States.equals("Pahang"))
@@ -155,7 +188,9 @@ public class DeliveryClass {
            else if(this.States.equals("Pinang"))
                st = 20;
            else if(this.States.equals("Melake"))
-               st = 6;
+               st = 10;
+           else if(this.States.equals("Negeri Sembilan"))
+               st = 8;
           return st;
        }
 }
